@@ -6,22 +6,26 @@ const bands = [
 	{
 		name : "BUMP OF CHICKEN",
 		description: "4人組ロックバンド。代表曲は天体観測",
-		genre : "J-Rock"
+		genre : "J-Rock",
+		youtubeId : "j7CDb610Bg0"
 	},
 	{
 		name : "UNISON SQUARE GARDEN",
 		description : "3人組ロックバンド。代表曲はシュガーソングとビターステップ",
-		genre : "J-Rock"
+		genre : "J-Rock",
+		youtubeId:"3exsRhw3xt8"
 	},
 	{
 		name : "THE ORAL CIGARETTES",
 		description: "4人組ロックバンド。代表曲は狂乱HeyKids!!",
-		genre : "J-Rock"
+		genre : "J-Rock",
+		youtubeId : "C-o8pTi6vd8"
 	},
 	{
 		name : "PompadollS",
 		description : "5人組正統進化型・邦楽ロックバンド。代表曲は悪食",
-		genre : "正統進化型 J-Rock"
+		genre : "正統進化型 J-Rock",
+		youtubeId : "nbYIDyGtOps"
 	}
 ];
 ---
@@ -35,23 +39,34 @@ const bands = [
 	<body class="bg-slate-900 text-white font-sans">
 		<header class="h-screen flex flex-col justify-center items-center text self-center">
 			<h1 class="text-6xl font-bold mb-4 header-title opacity-0">
-				NO MUSIC, NO LIFE.
+				My Favorite Artist
 			</h1>
 			<p class="text-xl text-slate-400 header-subtitle opacity-0 translate-y-10">
-				↓ Scroll Down
+				presented by hayata
 			</p>
 		</header>
 
 		<main class="max-w-4xl mx-auto px-4 py-20">
 			{bands.map((band) =>(
-				<article class="band-card mb-32 p-8 border border-slate-700 rounded-lg bg-slate-800 opacity-0 translate-x-[-50px]">
+				<article class="band-card mb-32 p-4 border border-slate-700 rounded-lg bg-slate-800 opacity-0 translate-x-[-50px]">
 				<span class="text-sm font-bold text-blue-400 block mb-2">{band.genre}</span>
 				<h2 class="text-3xl font-bold mb-4">{band.name}</h2>
 				<p class="text-slate-300">{band.description}</p>
+			<div class="w-full aspect-video rounded-md">
+			<iframe
+			class="w-1/2 mx-auto aspect-video rounded-md mt-6"
+				src={`https://www.youtube.com/embed/${band.youtubeId}`}
+				title="YouTube video player"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allowfullscreen>
+				</iframe>
+			</div>
 				</article>
 			))}
 			</main>
-		</body></html>
+		</body>
+		</html>
 
 		<script>
 			//必要な道具をインポートする
@@ -97,7 +112,7 @@ const bands = [
 						//markers:true, //これを入れるとマーカーが付けられる
 					},
 					opacity:1, //見えるようにする
-					y:0, //位置を戻す
+					x:0, //位置を戻す
 					duration:1, //1秒かけてふわっと
 					ease: "power2.out" //新しく入れたとこ
 				});
