@@ -1,0 +1,105 @@
+---
+import image from 'astro:assets';
+//1.バンドのデータを作成
+//これを書くと後でHTMLえお3回コピペしなくても自動で3つ作れるようになる
+const bands = [
+	{
+		name : "BUMP OF CHICKEN",
+		description: "4人組ロックバンド。代表曲は天体観測",
+		genre : "J-Rock"
+	},
+	{
+		name : "UNISON SQUARE GARDEN",
+		description : "3人組ロックバンド。代表曲はシュガーソングとビターステップ",
+		genre : "J-Rock"
+	},
+	{
+		name : "THE ORAL CIGARETTES",
+		description: "4人組ロックバンド。代表曲は狂乱HeyKids!!",
+		genre : "J-Rock"
+	},
+	{
+		name : "PompadollS",
+		description : "5人組正統進化型・邦楽ロックバンド。代表曲は悪食",
+		genre : "正統進化型 J-Rock"
+	}
+];
+---
+<html lang="ja">
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content = "width=device-width"/>
+		<title> My Favorite Bands </title>
+	</head>
+
+	<body class="bg-slate-900 text-white font-sans">
+		<header class="h-screen flex flex-col justify-center items-center text self-center">
+			<h1 class="text-6xl font-bold mb-4 header-title opacity-0">
+				NO MUSIC, NO LIFE.
+			</h1>
+			<p class="text-xl text-slate-400 header-subtitle opacity-0 translate-y-10">
+				↓ Scroll Down
+			</p>
+		</header>
+
+		<main class="max-w-4xl mx-auto px-4 py-20">
+			{bands.map((band) =>(
+				<article class="band-card mb-32 p-8 border border-slate-700 rounded-lg bg-slate-800 opacity-0 translate-x-[-50px]">
+				<span class="text-sm font-bold text-blue-400 block mb-2">{band.genre}</span>
+				<h2 class="text-3xl font-bold mb-4">{band.name}</h2>
+				<p class="text-slate-300">{band.description}</p>
+				</article>
+			))}
+			</main>
+		</body></html>
+
+		<script>
+			//必要な道具をインポートする
+			import { gsap } from "gsap";
+			import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+			//Gsapに「スクロール検知機能を使う」と伝える
+			gsap.registerPlugin(ScrollTrigger)
+
+
+			//1.タイトルのアニメーション
+			// .header-title というクラスがついた要素を動かす
+			gsap.to(".header-title",{
+				opacity:1,  //透明度を1(見える状態にする)
+				y:0,        //元の位置に戻す　(CSSで少しずらしておくと効果的)
+				duration:1, //1秒かける
+				delay: 0.5  //0.5秒待ってから開始
+			});
+
+			gsap.to(".header-subtitle",{
+				opacity:1,   //透明度を1(見える状態にする)
+				duration:1,  //1秒かける
+				delay:1      //1秒待ってから開始
+			});
+
+			gsap.to("header-subtitle",{
+				opacity: 1,
+				duration: 1,
+				delay: 1
+			});
+
+
+
+			//2.バンドカードのアニメーション
+			const cards = document.querySelectorAll('.band-card'); //カードを全部探す
+
+			cards.forEach((card) => { //1枚ずつ設定する
+				gsap.to(card,{
+					scrollTrigger: {
+						trigger:card, //そのカードが
+						start:"top 80%", //画面の下から20%の位置に来たら
+						toggleActions: "play none none reverse", //通り過ぎたら戻す設定
+						//markers:true, //これを入れるとマーカーが付けられる
+					},
+					opacity:1, //見えるようにする
+					y:0, //位置を戻す
+					duration:1, //1秒かけてふわっと
+					ease: "power2.out" //新しく入れたとこ
+				});
+			});
+		</script>
