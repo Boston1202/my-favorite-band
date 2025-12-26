@@ -1,31 +1,49 @@
 ---
 import image from 'astro:assets';
 //1.バンドのデータを作成
-//これを書くと後でHTMLえお3回コピペしなくても自動で3つ作れるようになる
+//これを書くと後でHTMLを3回コピペしなくても自動で3つ作れるようになる
+//youtubeIdを1つでなく、videosという箱の中に3つ入れる形に変える
 const bands = [
 	{
 		name : "BUMP OF CHICKEN",
-		description: "4人組ロックバンド。代表曲は天体観測",
+		description: "4人組ロックバンド。  【代表曲】天体観測 / 【有名曲】アカシア / 【好きな曲】望遠のマーチ",
 		genre : "J-Rock",
-		youtubeId : "j7CDb610Bg0"
+		//youtubeIdじゃなくてvideosという箱の中に3つ入れる形に変える
+		videos:{
+		representative : "j7CDb610Bg0", //代表曲 (天体観測)
+		famous: "4dnT-kKIO6Y", //有名曲 (アカシア)
+		favorite:"Fk4sgvvHyeI" //好きな曲 (望遠のマーチ)
+		}
 	},
 	{
 		name : "UNISON SQUARE GARDEN",
-		description : "3人組ロックバンド。代表曲はシュガーソングとビターステップ",
+		description : "3人組ロックバンド。  【代表曲】シュガーソングとビターステップ / 【有名曲】オリオンをなぞる / 【好きな曲】春が来て僕ら",
 		genre : "J-Rock",
-		youtubeId:"3exsRhw3xt8"
+		videos:{
+			representative : "3exsRhw3xt8", //代表曲(シュガビタ)
+			famous : "Lw5o2pSrVbQ", //有名曲(オリオンをなぞる)
+			favorite : "vrd95QQe6Gc" //好きな曲(春が来て僕ら)
+		}
 	},
 	{
 		name : "THE ORAL CIGARETTES",
-		description: "4人組ロックバンド。代表曲は狂乱HeyKids!!",
+		description: "4人組ロックバンド。  【代表曲】狂乱HeyKids!! / 【有名曲】起死回生STORY / 【好きな曲】愁",
 		genre : "J-Rock",
-		youtubeId : "C-o8pTi6vd8"
+		videos:{
+			representation : "C-o8pTi6vd8", //代表曲(狂乱HeyKids!!)
+			famous : "LqIbaicDP7A", //有名曲(起死回生STORY)
+			favorite : "aBdrpVAr5-E" //好きな曲(愁)
+		}
 	},
 	{
 		name : "PompadollS",
-		description : "5人組正統進化型・邦楽ロックバンド。代表曲は悪食",
+		description : "5人組正統進化型・邦楽ロックバンド。  【代表曲】悪食 / 【有名曲】スポットライトジャンキー / 【好きな曲】日の東、月の西",
 		genre : "正統進化型 J-Rock",
-		youtubeId : "nbYIDyGtOps"
+		videos:{
+			representation : "nbYIDyGtOps", //代表曲(悪食)
+			famous :"_jTYrUhm3vw", //有名曲(スポットライトジャンキー)
+			favorite : "v6Bd19sNiWc" //好きな曲(日の東、月の西)
+		}
 	}
 ];
 ---
@@ -52,21 +70,56 @@ const bands = [
 				<span class="text-sm font-bold text-blue-400 block mb-2">{band.genre}</span>
 				<h2 class="text-3xl font-bold mb-4">{band.name}</h2>
 				<p class="text-slate-300">{band.description}</p>
-			<div class="w-full aspect-video rounded-md">
-			<iframe
-			class="w-1/2 mx-auto aspect-video rounded-md mt-6"
-				src={`https://www.youtube.com/embed/${band.youtubeId}`}
-				title="YouTube video player"
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			{/* 1. 代表曲 */}
+			<div class="flex flex-col gap-2">
+				<h3 class="font-bold text-blue-300">【代表曲】</h3>
+				<div class="w-full aspect-video rounded-md overflow-hidden bg-black">
+				<iframe
+				class="w-full h-full"
+				src={`https://www.youtube.com/embed/${band.videos.representative}`}
+				title="Representative Song"
 				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				allow="accelerometer; autoplay;..."
 				allowfullscreen>
 				</iframe>
+				</div>
+				</div>
+			{/* 2. 有名曲 */}
+			<div class="flex flex-col gap-2">
+				<h3 class="font-bold text-green-300">【有名曲】</h3>
+				<div class="w-full aspect-video rounded-md overflow-hidden bg-black">
+				<iframe
+				class="w-full h-full"
+				src={`https://www.youtube.com/embed/${band.videos.famous}`}
+				title="Representative Song"
+				frameborder="0"
+				allow="accelerometer; autoplay;..."
+				allowfullscreen>
+			</iframe>
 			</div>
-				</article>
-			))}
-			</main>
-		</body>
-		</html>
+			</div>
+			{/* 3. 好きな曲 */}
+                        <div class="flex flex-col gap-2">
+                            <h3 class="font-bold text-pink-300">【好きな曲】</h3>
+                            <div class="w-full aspect-video rounded-md overflow-hidden bg-black">
+                                <iframe
+                                    class="w-full h-full"
+                                    src={`https://www.youtube.com/embed/${band.videos.favorite}`}
+                                    title="Favorite Song"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+			</div>
+			{/* 動画エリア終わり */}
+                </article>
+            ))}
+        </main>
+    </body>
+</html>
 
 		<script>
 			//必要な道具をインポートする
