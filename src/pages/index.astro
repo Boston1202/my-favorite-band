@@ -53,22 +53,36 @@ const bands = [
 		<meta name="viewport" content = "width=device-width"/>
 		<title> My Favorite Bands </title>
 		<style>
-	/*背景を動かすための設定 */
-	body{
-		/*グラデーションの色　黒紫青黒 */
-		background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #0f172a);
-		background-size: 400% 400%; /* 背景を巨大にする */
-		animation: gradientBG 15s ease infinite; /*15秒かけて動かし続ける */
-	}
-
-	/* アニメーションの動き方*/
-	@keyframes gradientBG{
-		0% {background-position:0% 50%;}
-		50% {background-position:100% 50%;}
-		100% {background-position: 0% 50%;}
-	}
-	</style>
-	</head>
+			/*背景の設定 */
+			body{
+				background-color: #0f172a; /*万が一グラデーションが出ない時の保険 */
+				background: radial-gradient(circle at center, #1e1b4b,#0f172a 80%);
+				min-height: 100vh;
+				overflow-x:hidden; /*横スクロールバーが出ないようにする */
+			}
+			/*背景で動く巨大な文字のデザイン*/
+			.bg-text {
+                font-size: 10rem; /*超巨大文字 */
+                font-weight: 900;
+                line-height: 1;
+                white-space: nowrap; /*折り返さない */
+                position: absolute;
+                top: -50px;
+                left: -100px;
+                z-index: -1; /* カードの後ろへ */
+                opacity: 0.1; /* うっすら透けさせる */
+                color: transparent; /* 中身は透明 */
+                -webkit-text-stroke: 2px rgba(255, 255, 255, 0.5); /* 白い縁取りだけつける */
+                pointer-events: none; /* マウスの邪魔をしない */
+            }
+            
+            /* スマホの時は文字を少し小さく */
+            @media (max-width: 768px) {
+                .bg-text { font-size: 5rem; top: 0; }
+            }
+        </style>
+    </head>
+	
 
 	<body class="text-white font-sans">
 		<header class="h-screen flex flex-col justify-center items-center text self-center">
@@ -146,45 +160,68 @@ const bands = [
 			//Gsapに「スクロール検知機能を使う」と伝える
 			gsap.registerPlugin(ScrollTrigger)
 
+// 1. オープニング：メガズームイン演出
+            // 画面いっぱいの大きさから、普通のサイズに戻る動き
+            gsap.fromTo(".header-title",
+                {
+                    scale: 10,       // 最初は10倍の大きさ
+                    opacity: 0,      // 透明
+                    filter: "blur(20px)" // ぼけている
+                },
+                {
+                    scale: 1,        // 1倍（元のサイズ）に戻る
+                    opacity: 1,      // 見えるようになる
+                    filter: "blur(0px)", // くっきりする
+                    duration: 2.5,   // 2.5秒かけてゆっくりと
+                    ease: "power4.out", // 勢いよく始まってゆっくり終わる
+                    delay: 0.2
+                }
+            );
 
-			//1 タイトルとサブタイトルをまとめてリズムよく出す
-			//.header-titleと.header-subtitleを配列で指定
-			gsap.fromTo([".header-title",".header-subtitle"],
-			{
-				opacity:0,
-				y:50, //下から上がってくる
-				scale:0.9 //少し小さい状態から
-			},
-			{
-				opacity:1,
-				y:0,
-				scale:1,
-				duration:1.5,
-				ease:"elastic.out(1,0.5)", //弾むような動き
-				stagger:0.3, //0.3秒ずらして実行
-				delay:0.5
-			}
-			);
+            gsap.fromTo(".header-subtitle",
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1, delay: 1.5 }
+            );
 
 
+            // 2. スクロール連動：背景文字のスライド
+            // バンドごとに処理をする
+            const cards = document.querySelectorAll('.band-card');
 
-			//2.バンドカードのアニメーション
-			const cards = document.querySelectorAll('.band-card'); //カードを全部探す
+            cards.forEach((card, index) => {
+                // そのカードの中にある「背景文字」を探す
+                const bgText = card.querySelector('.moving-text');
+                
+                // 奇数か偶数かで動く方向を変える（左へ行くか、右へ行くか）
+                const direction = index % 2 === 0 ? -200 : 200;
 
-			cards.forEach((card) => { //1枚ずつ設定する
-				gsap.to(card,{
-					scrollTrigger: {
-						trigger:card, //そのカードが
-						start:"top 80%", //画面の下から20%の位置に来たら
-						toggleActions: "play none none reverse", //通り過ぎたら戻す設定
-						//markers:true, //これを入れるとマーカーが付けられる
-					},
-					opacity:1, //見えるようにする
-					x:0, //位置を戻す
-					duration:1, //1秒かけてふわっと
-					ease: "power2.out" //新しく入れたとこ
-				});
-			});
+                gsap.to(bgText, {
+                    x: direction, // 横に移動させる
+                    scrollTrigger: {
+                        trigger: card,      // このカードが画面に来たら
+                        start: "top bottom", // カードの頭が画面の下に入ったら開始
+                        end: "bottom top",   // カードのお尻が画面の上に出たら終了
+                        scrub: 1,            // ★ここが重要！スクロール量と同期させる（1秒の遅れを持たせて滑らかに）
+                    }
+                });
+                
+                // カード自体のふわっと表示
+                gsap.fromTo(card,
+                    { y: 100, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 80%",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+
 
 			//3.マウスストーカー
 			const cursor = document.getElementById('cursor-glow');
