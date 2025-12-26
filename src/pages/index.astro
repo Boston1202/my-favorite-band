@@ -30,7 +30,7 @@ const bands = [
 		description: "4人組ロックバンド。  【代表曲】狂乱HeyKids!! / 【有名曲】起死回生STORY / 【好きな曲】愁",
 		genre : "J-Rock",
 		videos:{
-			representation : "C-o8pTi6vd8", //代表曲(狂乱HeyKids!!)
+			representative : "C-o8pTi6vd8", //代表曲(狂乱HeyKids!!)
 			famous : "LqIbaicDP7A", //有名曲(起死回生STORY)
 			favorite : "aBdrpVAr5-E" //好きな曲(愁)
 		}
@@ -40,7 +40,7 @@ const bands = [
 		description : "5人組正統進化型・邦楽ロックバンド。  【代表曲】悪食 / 【有名曲】スポットライトジャンキー / 【好きな曲】日の東、月の西",
 		genre : "正統進化型 J-Rock",
 		videos:{
-			representation : "nbYIDyGtOps", //代表曲(悪食)
+			representative : "nbYIDyGtOps", //代表曲(悪食)
 			famous :"_jTYrUhm3vw", //有名曲(スポットライトジャンキー)
 			favorite : "v6Bd19sNiWc" //好きな曲(日の東、月の西)
 		}
@@ -52,9 +52,25 @@ const bands = [
 		<meta charset="utf-8"/>
 		<meta name="viewport" content = "width=device-width"/>
 		<title> My Favorite Bands </title>
+		<style>
+	/*背景を動かすための設定 */
+	body{
+		/*グラデーションの色　黒紫青黒 */
+		background: linear-gradient(-45deg, #0f172a, #1e1b4b, #172554, #0f172a);
+		background-size: 400% 400%; /* 背景を巨大にする */
+		animation: gradientBG 15s ease infinite; /*15秒かけて動かし続ける */
+	}
+
+	/* アニメーションの動き方*/
+	@keyframes gradientBG{
+		0% {background-position:0% 50%;}
+		50% {background-position:100% 50%;}
+		100% {background-position: 0% 50%;}
+	}
+	</style>
 	</head>
 
-	<body class="bg-slate-900 text-white font-sans">
+	<body class="text-white font-sans">
 		<header class="h-screen flex flex-col justify-center items-center text self-center">
 			<h1 class="text-6xl font-bold mb-4 header-title opacity-0">
 				My Favorite Artist
@@ -100,24 +116,25 @@ const bands = [
 			</div>
 			</div>
 			{/* 3. 好きな曲 */}
-                        <div class="flex flex-col gap-2">
-                            <h3 class="font-bold text-pink-300">【好きな曲】</h3>
-                            <div class="w-full aspect-video rounded-md overflow-hidden bg-black">
-                                <iframe
-                                    class="w-full h-full"
-                                    src={`https://www.youtube.com/embed/${band.videos.favorite}`}
-                                    title="Favorite Song"
-                                    frameborder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
-                        </div>
+                <div class="flex flex-col gap-2">
+                <h3 class="font-bold text-pink-300">【好きな曲】</h3>
+                <div class="w-full aspect-video rounded-md overflow-hidden bg-black">
+                <iframe
+                class="w-full h-full"
+                src={`https://www.youtube.com/embed/${band.videos.favorite}`}
+                title="Favorite Song"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+                </iframe>
+            </div>
+            </div>
 			</div>
 			{/* 動画エリア終わり */}
                 </article>
             ))}
         </main>
+		<div id="cursor-glow" class="fixed top-0 left-0 w-64 h-64 bg-blue-500 rounded-full blur-[100px] opacity-60 pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2 mix-blend-screen"></div>
     </body>
 </html>
 
@@ -130,26 +147,24 @@ const bands = [
 			gsap.registerPlugin(ScrollTrigger)
 
 
-			//1.タイトルのアニメーション
-			// .header-title というクラスがついた要素を動かす
-			gsap.to(".header-title",{
-				opacity:1,  //透明度を1(見える状態にする)
-				y:0,        //元の位置に戻す　(CSSで少しずらしておくと効果的)
-				duration:1, //1秒かける
-				delay: 0.5  //0.5秒待ってから開始
-			});
-
-			gsap.to(".header-subtitle",{
-				opacity:1,   //透明度を1(見える状態にする)
-				duration:1,  //1秒かける
-				delay:1      //1秒待ってから開始
-			});
-
-			gsap.to("header-subtitle",{
-				opacity: 1,
-				duration: 1,
-				delay: 1
-			});
+			//1 タイトルとサブタイトルをまとめてリズムよく出す
+			//.header-titleと.header-subtitleを配列で指定
+			gsap.fromTo([".header-title",".header-subtitle"],
+			{
+				opacity:0,
+				y:50, //下から上がってくる
+				scale:0.9 //少し小さい状態から
+			},
+			{
+				opacity:1,
+				y:0,
+				scale:1,
+				duration:1.5,
+				ease:"elastic.out(1,0.5)", //弾むような動き
+				stagger:0.3, //0.3秒ずらして実行
+				delay:0.5
+			}
+			);
 
 
 
@@ -170,4 +185,17 @@ const bands = [
 					ease: "power2.out" //新しく入れたとこ
 				});
 			});
+
+			//3.マウスストーカー
+			const cursor = document.getElementById('cursor-glow');
+			document.addEventListener('mousemove',(e)=>{
+				gsap.to(cursor,{
+					x: e.clientX,
+					y: e.clientY,
+					duration:0.3, //少し遅れてついてくる設定
+					ease:"power2.out"
+			});
+			});
 		</script>
+	</body>
+</html>
