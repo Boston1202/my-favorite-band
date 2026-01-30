@@ -1,238 +1,183 @@
 ---
-import image from 'astro:assets';
-//1.バンドのデータを作成
-//これを書くと後でHTMLを3回コピペしなくても自動で3つ作れるようになる
-//youtubeIdを1つでなく、videosという箱の中に3つ入れる形に変える
+import Layout from "../layouts/layout.astro";
+import VideoCard from "../components/VideoCard.astro";
+
 const bands = [
-	{
-		name : "BUMP OF CHICKEN",
-		description: "4人組ロックバンド。  【代表曲】天体観測 / 【有名曲】アカシア / 【好きな曲】望遠のマーチ",
-		genre : "J-Rock",
-		//youtubeIdじゃなくてvideosという箱の中に3つ入れる形に変える
-		videos:{
-		representative : "j7CDb610Bg0", //代表曲 (天体観測)
-		famous: "4dnT-kKIO6Y", //有名曲 (アカシア)
-		favorite:"Fk4sgvvHyeI" //好きな曲 (望遠のマーチ)
-		}
-	},
-	{
-		name : "UNISON SQUARE GARDEN",
-		description : "3人組ロックバンド。  【代表曲】シュガーソングとビターステップ / 【有名曲】オリオンをなぞる / 【好きな曲】春が来て僕ら",
-		genre : "J-Rock",
-		videos:{
-			representative : "3exsRhw3xt8", //代表曲(シュガビタ)
-			famous : "Lw5o2pSrVbQ", //有名曲(オリオンをなぞる)
-			favorite : "vrd95QQe6Gc" //好きな曲(春が来て僕ら)
-		}
-	},
-	{
-		name : "THE ORAL CIGARETTES",
-		description: "4人組ロックバンド。  【代表曲】狂乱HeyKids!! / 【有名曲】起死回生STORY / 【好きな曲】愁",
-		genre : "J-Rock",
-		videos:{
-			representative : "C-o8pTi6vd8", //代表曲(狂乱HeyKids!!)
-			famous : "LqIbaicDP7A", //有名曲(起死回生STORY)
-			favorite : "aBdrpVAr5-E" //好きな曲(愁)
-		}
-	},
-	{
-		name : "PompadollS",
-		description : "5人組正統進化型・邦楽ロックバンド。  【代表曲】悪食 / 【有名曲】スポットライトジャンキー / 【好きな曲】日の東、月の西",
-		genre : "正統進化型 J-Rock",
-		videos:{
-			representative : "nbYIDyGtOps", //代表曲(悪食)
-			famous :"_jTYrUhm3vw", //有名曲(スポットライトジャンキー)
-			favorite : "v6Bd19sNiWc" //好きな曲(日の東、月の西)
-		}
-	}
+  {
+    name: "BUMP OF CHICKEN",
+    description:
+      "4人組ロックバンド。  【代表曲】天体観測 / 【有名曲】アカシア / 【好きな曲】望遠のマーチ",
+    genre: "J-Rock",
+    videos: {
+      representative: "j7CDb610Bg0",
+      famous: "4dnT-kKIO6Y",
+      favorite: "Fk4sgvvHyeI",
+    },
+  },
+  {
+    name: "UNISON SQUARE GARDEN",
+    description:
+      "3人組ロックバンド。  【代表曲】シュガーソングとビターステップ / 【有名曲】オリオンをなぞる / 【好きな曲】春が来て僕ら",
+    genre: "J-Rock",
+    videos: {
+      representative: "3exsRhw3xt8",
+      famous: "Lw5o2pSrVbQ",
+      favorite: "vrd95QQe6Gc",
+    },
+  },
+  {
+    name: "THE ORAL CIGARETTES",
+    description:
+      "4人組ロックバンド。  【代表曲】狂乱HeyKids!! / 【有名曲】起死回生STORY / 【好きな曲】愁",
+    genre: "J-Rock",
+    videos: {
+      representative: "C-o8pTi6vd8",
+      famous: "LqIbaicDP7A",
+      favorite: "aBdrpVAr5-E",
+    },
+  },
+  {
+    name: "PompadollS",
+    description:
+      "5人組正統進化型・邦楽ロックバンド。  【代表曲】悪食 / 【有名曲】スポットライトジャンキー / 【好きな曲】日の東、月の西",
+    genre: "正統進化型 J-Rock",
+    videos: {
+      representative: "nbYIDyGtOps",
+      famous: "_jTYrUhm3vw",
+      favorite: "v6Bd19sNiWc",
+    },
+  },
 ];
 ---
-<html lang="ja">
-	<head>
-		<meta charset="utf-8"/>
-		<meta name="viewport" content = "width=device-width"/>
-		<title> My Favorite Bands </title>
-		<style>
-			/*背景の設定 */
-			body{
-				background-color: #0f172a; /*万が一グラデーションが出ない時の保険 */
-				background: radial-gradient(circle at center, #1e1b4b,#0f172a 80%);
-				min-height: 100vh;
-				overflow-x:hidden; /*横スクロールバーが出ないようにする */
-			}
-			/*背景で動く巨大な文字のデザイン*/
-			.bg-text {
-                font-size: 10rem; /*超巨大文字 */
-                font-weight: 900;
-                line-height: 1;
-                white-space: nowrap; /*折り返さない */
-                position: absolute;
-                top: -50px;
-                left: -100px;
-                z-index: -1; /* カードの後ろへ */
-                opacity: 0.1; /* うっすら透けさせる */
-                color: transparent; /* 中身は透明 */
-                -webkit-text-stroke: 2px rgba(255, 255, 255, 0.5); /* 白い縁取りだけつける */
-                pointer-events: none; /* マウスの邪魔をしない */
-            }
-            
-            /* スマホの時は文字を少し小さく */
-            @media (max-width: 768px) {
-                .bg-text { font-size: 5rem; top: 0; }
-            }
-        </style>
-    </head>
-	
 
-	<body class="text-white font-sans">
-		<header class="h-screen flex flex-col justify-center items-center text self-center">
-			<h1 class="text-6xl font-bold mb-4 header-title opacity-0">
-				My Favorite Artist
-			</h1>
-			<p class="text-xl text-slate-400 header-subtitle opacity-0 translate-y-10">
-				presented by hayata
-			</p>
-		</header>
+<Layout>
+  <main class="max-w-4xl mx-auto px-4 py-20">
+    {
+      bands.map((band) => (
+        /* articleに relative を追加（中の絶対配置要素の基準にするため） */
+        <article class="band-card relative mb-32 p-4 border border-slate-700 rounded-lg bg-slate-800 opacity-0 translate-x-[-50px]">
+          <div class="moving-text absolute top-0 left-[-50px] md:top-[-50px] md:left-[-100px] text-[5rem] md:text-[10rem] font-black leading-none whitespace-nowrap -z-10 opacity-10 text-transparent pointer-events-none [-webkit-text-stroke:2px_rgba(255,255,255,0.5)]">
+            {band.name}
+          </div>
 
-		<main class="max-w-4xl mx-auto px-4 py-20">
-			{bands.map((band) =>(
-				<article class="band-card mb-32 p-4 border border-slate-700 rounded-lg bg-slate-800 opacity-0 translate-x-[-50px]">
-				<span class="text-sm font-bold text-blue-400 block mb-2">{band.genre}</span>
-				<h2 class="text-3xl font-bold mb-4">{band.name}</h2>
-				<p class="text-slate-300">{band.description}</p>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			{/* 1. 代表曲 */}
-			<div class="flex flex-col gap-2">
-				<h3 class="font-bold text-blue-300">【代表曲】</h3>
-				<div class="w-full aspect-video rounded-md overflow-hidden bg-black">
-				<iframe
-				class="w-full h-full"
-				src={`https://www.youtube.com/embed/${band.videos.representative}`}
-				title="Representative Song"
-				frameborder="0"
-				allow="accelerometer; autoplay;..."
-				allowfullscreen>
-				</iframe>
-				</div>
-				</div>
-			{/* 2. 有名曲 */}
-			<div class="flex flex-col gap-2">
-				<h3 class="font-bold text-green-300">【有名曲】</h3>
-				<div class="w-full aspect-video rounded-md overflow-hidden bg-black">
-				<iframe
-				class="w-full h-full"
-				src={`https://www.youtube.com/embed/${band.videos.famous}`}
-				title="Representative Song"
-				frameborder="0"
-				allow="accelerometer; autoplay;..."
-				allowfullscreen>
-			</iframe>
-			</div>
-			</div>
-			{/* 3. 好きな曲 */}
-                <div class="flex flex-col gap-2">
-                <h3 class="font-bold text-pink-300">【好きな曲】</h3>
-                <div class="w-full aspect-video rounded-md overflow-hidden bg-black">
-                <iframe
-                class="w-full h-full"
-                src={`https://www.youtube.com/embed/${band.videos.favorite}`}
-                title="Favorite Song"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen>
-                </iframe>
-            </div>
-            </div>
-			</div>
-			{/* 動画エリア終わり */}
-                </article>
-            ))}
-        </main>
-		<div id="cursor-glow" class="fixed top-0 left-0 w-64 h-64 bg-blue-500 rounded-full blur-[100px] opacity-60 pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2 mix-blend-screen"></div>
-    </body>
-</html>
+          <span class="text-sm font-bold text-blue-400 block mb-2 relative z-10">
+            {band.genre}
+          </span>
+          <h2 class="text-3xl font-bold mb-4 relative z-10">{band.name}</h2>
+          <p class="text-slate-300 relative z-10">{band.description}</p>
 
-		<script>
-			//必要な道具をインポートする
-			import { gsap } from "gsap";
-			import { ScrollTrigger } from "gsap/ScrollTrigger";
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4 relative z-10">
+            {/* 1. 代表曲 */}
+            <VideoCard
+              title="【代表曲】"
+              textColor="text-blue-300"
+              videoId={band.videos.representative}
+            />
 
-			//Gsapに「スクロール検知機能を使う」と伝える
-			gsap.registerPlugin(ScrollTrigger)
+            {/* 2. 有名曲 */}
+            <VideoCard
+              title="【有名曲】"
+              textColor="text-green-300"
+              videoId={band.videos.famous}
+            />
 
-// 1. オープニング：メガズームイン演出
-            // 画面いっぱいの大きさから、普通のサイズに戻る動き
-            gsap.fromTo(".header-title",
-                {
-                    scale: 10,       // 最初は10倍の大きさ
-                    opacity: 0,      // 透明
-                    filter: "blur(20px)" // ぼけている
-                },
-                {
-                    scale: 1,        // 1倍（元のサイズ）に戻る
-                    opacity: 1,      // 見えるようになる
-                    filter: "blur(0px)", // くっきりする
-                    duration: 2.5,   // 2.5秒かけてゆっくりと
-                    ease: "power4.out", // 勢いよく始まってゆっくり終わる
-                    delay: 0.2
-                }
-            );
+            {/* 3. 好きな曲 */}
+            <VideoCard
+              title="【好きな曲】"
+              textColor="text-pink-300"
+              videoId={band.videos.favorite}
+            />
+          </div>
+          {/* 動画エリア終わり */}
+        </article>
+      ))
+    }
+  </main>
 
-            gsap.fromTo(".header-subtitle",
-                { y: 50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1, delay: 1.5 }
-            );
+  <div
+    id="cursor-glow"
+    class="fixed top-0 left-0 w-64 h-64 bg-blue-500 rounded-full blur-[100px] opacity-60 pointer-events-none z-0 transform -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+  >
+  </div>
+</Layout>
 
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-            // 2. スクロール連動：背景文字のスライド
-            // バンドごとに処理をする
-            const cards = document.querySelectorAll('.band-card');
+  gsap.registerPlugin(ScrollTrigger);
 
-            cards.forEach((card, index) => {
-                // そのカードの中にある「背景文字」を探す
-                const bgText = card.querySelector('.moving-text');
-                
-                // 奇数か偶数かで動く方向を変える（左へ行くか、右へ行くか）
-                const direction = index % 2 === 0 ? -200 : 200;
+  // 1. オープニング
+  gsap.fromTo(
+    ".header-title",
+    {
+      scale: 10,
+      opacity: 0,
+      filter: "blur(20px)",
+    },
+    {
+      scale: 1,
+      opacity: 1,
+      filter: "blur(0px)",
+      duration: 2.5,
+      ease: "power4.out",
+      delay: 0.2,
+    },
+  );
 
-                gsap.to(bgText, {
-                    x: direction, // 横に移動させる
-                    scrollTrigger: {
-                        trigger: card,      // このカードが画面に来たら
-                        start: "top bottom", // カードの頭が画面の下に入ったら開始
-                        end: "bottom top",   // カードのお尻が画面の上に出たら終了
-                        scrub: 1,            // ★ここが重要！スクロール量と同期させる（1秒の遅れを持たせて滑らかに）
-                    }
-                });
-                
-                // カード自体のふわっと表示
-                gsap.fromTo(card,
-                    { y: 100, opacity: 0 },
-                    {
-                        y: 0,
-                        opacity: 1,
-                        duration: 1,
-                        ease: "power2.out",
-                        scrollTrigger: {
-                            trigger: card,
-                            start: "top 80%",
-                            toggleActions: "play none none reverse"
-                        }
-                    }
-                );
-            });
+  gsap.fromTo(
+    ".header-subtitle",
+    { y: 50, opacity: 0 },
+    { y: 0, opacity: 1, duration: 1, delay: 1.5 },
+  );
 
+  // 2. スクロール連動
+  const cards = document.querySelectorAll(".band-card");
 
-			//3.マウスストーカー
-			const cursor = document.getElementById('cursor-glow');
-			document.addEventListener('mousemove',(e)=>{
-				gsap.to(cursor,{
-					x: e.clientX,
-					y: e.clientY,
-					duration:0.3, //少し遅れてついてくる設定
-					ease:"power2.out"
-			});
-			});
-		</script>
-	</body>
-</html>
+  cards.forEach((card, index) => {
+    // Tailwindのクラスに追加した .moving-text を取得
+    const bgText = card.querySelector(".moving-text");
+
+    const direction = index % 2 === 0 ? -200 : 200;
+
+    // 背景文字がある場合のみアニメーション実行
+    if (bgText) {
+      gsap.to(bgText, {
+        x: direction,
+        scrollTrigger: {
+          trigger: card,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    }
+
+    gsap.fromTo(
+      card,
+      { y: 100, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: card,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      },
+    );
+  });
+
+  // 3. マウスストーカー
+  const cursor = document.getElementById("cursor-glow");
+  document.addEventListener("mousemove", (e) => {
+    gsap.to(cursor, {
+      x: e.clientX,
+      y: e.clientY,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  });
+</script>

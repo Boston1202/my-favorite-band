@@ -1,0 +1,28 @@
+---
+// src/components/VideoCard.astro
+
+// 親から受け取る変数の型を定義（TypeScript）
+interface Props {
+  title: string; // "【代表曲】" などのタイトル
+  textColor: string; // "text-blue-300" などの色クラス
+  videoId: string; // YouTubeのID
+}
+
+// 親から渡された値を取り出す
+const { title, textColor, videoId } = Astro.props;
+---
+
+<div class="flex flex-col gap-2">
+  {/* 受け取った色クラス(textColor)とタイトル(title)を適用 */}
+  <h3 class={`font-bold ${textColor}`}>{title}</h3>
+
+  <div class="w-full aspect-video rounded-md overflow-hidden bg-black">
+    <iframe
+      class="w-full h-full"
+      src={`https://www.youtube.com/embed/${videoId}`}
+      title={title}
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen></iframe>
+  </div>
+</div>

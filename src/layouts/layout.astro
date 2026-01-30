@@ -1,0 +1,29 @@
+---
+import "../styles/global.css";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>My Favorite Bands</title>
+  </head>
+
+  <body
+    class="text-white font-sans bg-slate-900 min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_center,_#1e1b4b,_#0f172a_80%)]"
+  >
+    <header
+      class="h-screen flex flex-col justify-center items-center text-center self-center"
+    >
+      <h1 class="text-6xl font-bold mb-4 header-title opacity-0">
+        My Favorite Artist
+      </h1>
+      <p
+        class="text-xl text-slate-400 header-subtitle opacity-0 translate-y-10"
+      >
+        presented by hayata
+      </p>
+    </header>
+    <slot />
+  </body>
+</html>
